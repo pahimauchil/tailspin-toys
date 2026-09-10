@@ -5,12 +5,18 @@
       "url": "https://api.githubcopilot.com/mcp/"
     },
     "playwright": {
+      "type": "local",
       "command": "npx",
       "args": [
-        "@playwright/mcp@latest"
+        "@playwright/mcp@latest",
+        "--headless",
+        "--no-sandbox"
+      ],
+      "tools": [
+        "*"
       ]
     },
-     "astro-docs": {
+    "astro-docs": {
       "type": "http",
       "url": "https://mcp.docs.astro.build/mcp"
     }
