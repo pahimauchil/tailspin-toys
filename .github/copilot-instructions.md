@@ -2,6 +2,8 @@
 
 This is a crowdfunding platform for games with a developer theme. The application is a single **Astro 7** site (fully prerendered/static output) styled with **Tailwind CSS v4**. Data is stored in a local SQLite database accessed at build time through **Drizzle ORM + Node.js's built-in SQLite driver**; pages query the database directly in frontmatter — there is no separate backend API or client-side UI framework. Please follow these guidelines when contributing:
 
+
+
 ## Agent notes
 
 - Explore the project before beginning code generation
@@ -11,6 +13,8 @@ This is a crowdfunding platform for games with a developer theme. The applicatio
 - Do not generate summary markdown files upon completion of a task
 - Always use absolute paths when running scripts and BASH commands
 - **NEVER commit or push to main automatically unless explicitly instructed to do so**
+- Every exported function should have a TSDoc comment describing its purpose, parameters, and return value.
+- Before imports or any code, add a comment block to the file that explains its purpose.
 
 ## Code standards
 
