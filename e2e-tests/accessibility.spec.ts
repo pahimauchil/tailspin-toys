@@ -2,6 +2,15 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Accessibility Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      if (window.sessionStorage.getItem('tailspin-high-contrast-test-reset') !== 'true') {
+        window.localStorage.removeItem('tailspin-high-contrast');
+        window.sessionStorage.setItem('tailspin-high-contrast-test-reset', 'true');
+      }
+    });
+  });
+
   test('home page should not have accessibility violations', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('[data-testid="games-grid"]', { timeout: 10000 });
@@ -219,5 +228,36 @@ test.describe('Accessibility Tests', () => {
     for (let i = 0; i < count; i++) {
       await expect(gameCardSvgs.nth(i)).toHaveAttribute('aria-hidden', 'true');
     }
+  });
+
+  test('high contrast mode - should toggle with the keyboard', async ({ page }) => {
+    await page.goto('/');
+
+    const contrastToggle = page.getByTestId('contrast-toggle');
+    await expect(contrastToggle).toHaveAccessibleName('Enable high contrast mode');
+    await expect(contrastToggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('[data-testid="contrast-state"]')).toHaveText('Off');
+
+    await contrastToggle.focus();
+    await page.keyboard.press('Enter');
+
+    await expect(contrastToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(contrastToggle).toHaveAccessibleName('Disable high contrast mode');
+    await expect(page.locator('html')).toHaveClass(/high-contrast/);
+    await expect(page.locator('[data-testid="contrast-state"]')).toHaveText('On');
+  });
+
+  test('high contrast mode - should persist after a page reload', async ({ page }) => {
+    await page.goto('/');
+
+    await page.getByTestId('contrast-toggle').click();
+    await expect(page.locator('html')).toHaveClass(/high-contrast/);
+
+    await page.reload();
+
+    const contrastToggle = page.getByTestId('contrast-toggle');
+    await expect(contrastToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('html')).toHaveClass(/high-contrast/);
+    await expect(page.locator('[data-testid="contrast-state"]')).toHaveText('On');
   });
 });
